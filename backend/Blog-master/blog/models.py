@@ -20,7 +20,7 @@ class Blog(models.Model):
     title = models.CharField(max_length=255, null=False)
     content = models.TextField()
     public = models.BooleanField(default=False)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="blog")
     created_at = models.DateTimeField(null=True, auto_now_add=True)
     updated_at = models.DateTimeField(null=True, auto_now=True)
     on_deleted = models.BooleanField(default=False)

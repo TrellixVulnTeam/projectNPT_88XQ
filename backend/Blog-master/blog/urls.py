@@ -15,8 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import  BlogDetail,BlogView
+from .views import  BlogDetail,BlogView,CategoryView
 urlpatterns = [
-    path("", BlogView.as_view(),name = "view blog"),
-    path("/creteblog/", BlogDetail.as_view(), name= "blog detail"),
+    path("", BlogView.as_view(),name = "view_blog"),
+    path("creteblog/", BlogDetail.as_view(), name= "blog_detail"),
+    path("category/", CategoryView.as_view(), name= "category_detail"),
 ]
