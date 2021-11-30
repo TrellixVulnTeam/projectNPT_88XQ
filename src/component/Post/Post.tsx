@@ -1,5 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { ReactElement, useEffect, useState } from 'react';
+import {Link } from 'react-router-dom';
+import Header from '../Header/Header';
+import PostPage from '../PostPage/index';
 import {PostStyled} from './styled/PostStyled';
 interface Props {}
 
@@ -15,20 +18,29 @@ function Post({}: Props): ReactElement {
             })
     },[])
 
-    return (
-        <PostStyled >
+    // const[show, setShow] = useState(false);
 
+    return (
+        
+        <PostStyled >
+           
             {posts.map(post => (
                 <div className="post">
-                    <a href="" className="a">
+                    
+                    <Link to="/postpage" className="a">
+                        <h1 className = "post__userID">{post.userId}</h1>
+                    
                         <h1 className = "post__title">{post.title}</h1>
-                    </a>
-                    <a href="" className="a"> 
+
                         <span className="post__category">Category</span>
-                    </a>
+                    </Link>
+                    
+                    
                     <span className="post__date"> Ngày buồn tháng nhớ năm thương </span>
                     <p className="post__content">{post.body}</p>
+                    {/* {show && <PostPage />} */}
                 </div>
+                
             ))}
 
 

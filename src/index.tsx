@@ -1,20 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import{BrowserRouter} from 'react-router-dom';
 import './index.css';
 import App from './App';
-import Header from './component/Header/Header'
-import Post from './component/Post/Post'
-import Login from './component/Login/index'
+
 import reportWebVitals from './reportWebVitals';
+
+
 
 ReactDOM.render(
   <React.StrictMode>
-    {/* <Login/> */}
-    <Header/>
-    <Post/>
-    
-    
-    
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );
