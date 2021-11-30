@@ -1,37 +1,32 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
-
-# Create your models here.
 class Category(models.Model):
     title = models.CharField(max_length=255, null=False)
     created_at = models.DateTimeField(null=True, auto_now_add=True)
     updated_at = models.DateTimeField(null=True, auto_now=True)
-    on_deleted = models.BooleanField()
+    on_deleted = models.BooleanField(default=False)
 
-    # def __str__(self):
-    #     return self.title
+    def __str__(self):
+        return self.title
 
 
-# STATUS = (
-#     (0, "Draft"),
-#     (1, "Publish")
-# )
+
 
 
 class Blog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255, null=False)
     content = models.TextField()
-    public = models.BooleanField()
+    public = models.BooleanField(default=False)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    created_on = models.DateTimeField(null=True, auto_now_add=True)
-    updated_on = models.DateTimeField(null=True, auto_now=True)
-    # status = models.IntegerField(choices=STATUS, default=0)
-    on_deleted = models.BooleanField()
+    created_at = models.DateTimeField(null=True, auto_now_add=True)
+    updated_at = models.DateTimeField(null=True, auto_now=True)
+    on_deleted = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['-created_on']
+        ordering = ['-created_at']
 
     def __str__(self):
         return self.title
