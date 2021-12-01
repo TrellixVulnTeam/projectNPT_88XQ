@@ -56,9 +56,11 @@ class BlogDetailSerializer(serializers.ModelSerializer):
         return blog_instance
 
     def update(self, instance, validated_data):
+
         instance.title = validated_data.get('title', instance.title)
         instance.category = validated_data.get('category', instance.category)
         instance.content = validated_data.get('content', instance.content)
         instance.public = validated_data.get('public', instance.public)
+        instance.save()
+        return instance
 
-        return super().update(instance, validated_data)

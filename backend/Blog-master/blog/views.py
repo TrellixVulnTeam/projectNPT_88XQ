@@ -80,25 +80,22 @@ class BlogUpload(APIView):
 class BlogDetail(APIView):
     permissions_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
-    def get(self, request, pk, format=None):
+    def get_object(self, pk, format=None):
         try:
-            blog = Blog.objects.get(pk=pk, )
-        except:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Blog.objects.get(pk=pk)
+        except Blog.DoesNotExist:
+            raise Http404
 
     def put(self, request, pk, format=None):
-        blog = self.objects.get(pk)
-        serializer = BlogDetailSerializers(blog, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        blog_obj = self.get_object(pk=pk)
+        serializers = BlogDetailSerializer(blog_obj, data=request.data, partial=True)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data, status=status.HTTP_201_CREATED)
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
-        blog = self.get_object(pk)
+        blog = self.get_object(pk=pk)
         blog.on_deleted = True
-        blog.save()
+        blog.delete()
         return Response({"message": "blog deleted!"}, status=status.HTTP_200_OK)
-
-
-
