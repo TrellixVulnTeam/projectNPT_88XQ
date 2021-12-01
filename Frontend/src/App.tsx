@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import {Routes,Route} from 'react-router-dom';
 // import './App.css';
@@ -8,13 +8,16 @@ import PostPage from './component/PostPage';
 import Login from './component/Login';
 
 function App() {
+  
+
   return (
     <div className="App">
-      <Header/>
+      <Header  />
+      {/* <Post  /> */}
       <Routes>
         <Route path="/" element={<Post/>} />
         <Route path="/postpage" element={<PostPage/>} />
-        <Route path = "/login" element={<Login/>} />
+        <Route path="/login" element={<Login/>} />
       </Routes>
     </div>
   );
