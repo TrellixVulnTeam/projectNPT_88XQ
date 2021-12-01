@@ -13,14 +13,12 @@ class Category(models.Model):
 
 
 
-
-
 class Blog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255, null=False)
     content = models.TextField()
     public = models.BooleanField(default=False)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="blog")
+    category = models.ForeignKey(Category,related_name="blog", on_delete=models.CASCADE)
     created_at = models.DateTimeField(null=True, auto_now_add=True)
     updated_at = models.DateTimeField(null=True, auto_now=True)
     on_deleted = models.BooleanField(default=False)

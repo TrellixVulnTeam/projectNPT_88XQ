@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import  BlogDetail,BlogView,CategoryView
+from .views import  BlogUpload,BlogUserView,CategoryView,BlogAllView
 urlpatterns = [
-    path("", BlogView.as_view(),name = "view_blog"),
-    path("creteblog/", BlogDetail.as_view(), name= "blog_detail"),
+    path("", BlogAllView.as_view(),name = "view_blog"),
+    path("creteblog/", BlogUpload.as_view(), name= "blog_detail"),
     path("category/", CategoryView.as_view(), name= "category_detail"),
+    path("blog/", BlogUserView.as_view(),name= "blog_user"),
 ]
