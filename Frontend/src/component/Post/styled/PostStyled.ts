@@ -8,6 +8,11 @@ export const PostStyled = styled.div`
         text-decoration:none;
         color:black;
     }
+    .btnADD{
+        position: absolute;
+        padding:20px 40px;
+        left:10px;
+    }
     .post{
         margin-bottom:100px;
         &__title{
@@ -21,6 +26,10 @@ export const PostStyled = styled.div`
         &__date{
             font-weight:bold;
             font-size:1rem;
+        }
+        &__content{
+            overflow:hidden;
+            text-overflow: ellipsis;
         }
     }
 `;

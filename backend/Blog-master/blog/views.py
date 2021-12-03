@@ -52,7 +52,7 @@ class CategoryAllDetailView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
  
 class BlogUserView(APIView):
-    permissions_classes = [permissions.IsAuthenticated]
+    permissions_classes = [permissions.AllowAny]
     def get(self, request, format=None):
         blogs = Blog.objects.filter(on_deleted = False , user = request.user)
         # blogs = Blog.objects.filter(on_deleted = False)
@@ -60,7 +60,7 @@ class BlogUserView(APIView):
         return Response(serializer.data)
 
 class BlogUpload(APIView):
-    permissions_classes = [permissions.IsAuthenticated]
+    permissions_classes = [permissions.AllowAny]
     def post(self, request, format=None):
         serializer = BlogDetailSerializer(data=request.data)
         if serializer.is_valid():
@@ -69,7 +69,7 @@ class BlogUpload(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class BlogDetail(APIView):
-    permissions_classes = [permissions.IsAuthenticated,IsOwnerOrReadOnly]
+    permissions_classes = [permissions.AllowAny,IsOwnerOrReadOnly]
     def get(self, request, pk,format=None):
         try:
             blog = Blog.objects.get(pk=pk,)

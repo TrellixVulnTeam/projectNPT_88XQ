@@ -1,31 +1,51 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import { type } from 'os';
+
 import React, { ReactElement, useEffect, useState } from 'react';
-import {Link } from 'react-router-dom';
-import Header from '../Header/Header';
-import PostPage from '../PostPage/index';
+import {Link, useNavigate  } from 'react-router-dom';
+// import Header from '../Header/Header';
+// import PostPage from '../PostPage/index';
 import {PostStyled} from './styled/PostStyled';
+import axios from 'axios';
+import { connect } from "react-redux";
+
 interface Props {}
 
 function Post({}: Props): ReactElement {
 
     const [posts, setPosts] = useState<any[]>([]);
 
+    const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM4NTg1MDM0LCJpYXQiOjE2Mzg0OTg2MzQsImp0aSI6IjA2MDQwYWU4NzkzMTRlYzhiYjNjYTE5ODBkZDUwZThmIiwidXNlcl9pZCI6M30._DECu0Y7zR8fnuaBzNiQjAs5BzBj5xHbuOxm7NBPiwE"
+    
+    const[postid, setPostid] = useState(2);
+   
+
+
     
     
-    useEffect(() => {
-        fetch('https://jsonplaceholder.typicode.com/posts')
-            .then(res=> res.json())
-            .then(posts => {
-                setPosts( posts );
-            })
+    // console.log('Bearer ' + token);
+    
+    
+
+    useEffect(() =>{
+        axios.get(`http://127.0.0.1:8000/api/`,{
+            responseType: 'json',
+        })
+        .then(response => {
+            // console.log(response.data);
+            const myposts = response.data;
+            setPosts(myposts.results);
+            // console.log(mypostresult);
+        })
+
+        
     },[])
 
-    const[postid, setPostid] = useState(1);
-    const[userid, setUserid] = useState(1);
-    const[title, setTitle] = useState("sadasd");
-    const[body, setBody] = useState("aaaaaaaaaaaaaa");
+    
+    console.log(posts);
+    
+    console.log(postid);
+    
+
+    
     
     // const myObj = JSON.parse();
     
@@ -33,29 +53,32 @@ function Post({}: Props): ReactElement {
     return (
         
         <PostStyled >
+            <div>
+                <button className="btnADD">ADD Blog</button>
+            </div>
             <div className="post"  >
+
             {posts.map(post => (
                 
-                <Link onClick={() => setPostid(post.id + 1)} 
+                
+                <Link key={post.id} state = {{postid : post.id}}
 
-                state={{postid,userid,title,body}}
-
-                to="/postpage" key={post.id + 1} className="a"> 
-                        <h1  className = "post__userID">{post.userId}</h1>
+                to="/postpage"  className="a" > 
+                        <h1  className = "post__userID">{post.user}</h1>
                     
                         <h1 className = "post__title">{post.title}</h1>
 
-                        <span className="post__category">Category</span>
+                        <span className="post__category">{post.category}</span>
 
-                        <span className="post__date"> Ngày buồn tháng nhớ năm thương </span>
-
-                        <p>{postid}</p>
-                        <p className="post__content">{post.body}</p>
+                        <span className="post__date"> {post.updated_at} </span>
+                        <p className="post__content">{post.content}</p>
                 </Link>
+                
             ))}
             </div>
         </PostStyled>
     );
 }
+
 
 export default Post;
