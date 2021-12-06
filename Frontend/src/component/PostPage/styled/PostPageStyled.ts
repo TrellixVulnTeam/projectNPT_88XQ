@@ -21,5 +21,8 @@ export const PostPageStyled = styled.div`
             font-weight:bold;
             font-size:1rem;
         }
+        &__content{
+            word-wrap: break-word;
+        }
     }
 `;

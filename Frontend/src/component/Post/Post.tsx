@@ -1,32 +1,33 @@
 
 import React, { ReactElement, useEffect, useState } from 'react';
-import {Link, useNavigate  } from 'react-router-dom';
+import {Link, useNavigate ,useLocation } from 'react-router-dom';
 // import Header from '../Header/Header';
 // import PostPage from '../PostPage/index';
 import {PostStyled} from './styled/PostStyled';
 import axios from 'axios';
-import { connect } from "react-redux";
+
 
 interface Props {}
 
 function Post({}: Props): ReactElement {
 
+
     const [posts, setPosts] = useState<any[]>([]);
 
-    const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM4NTg1MDM0LCJpYXQiOjE2Mzg0OTg2MzQsImp0aSI6IjA2MDQwYWU4NzkzMTRlYzhiYjNjYTE5ODBkZDUwZThmIiwidXNlcl9pZCI6M30._DECu0Y7zR8fnuaBzNiQjAs5BzBj5xHbuOxm7NBPiwE"
     
-    const[postid, setPostid] = useState(2);
-   
 
-
-    
-    
     // console.log('Bearer ' + token);
-    
+    const location = useLocation() 
+    // const [id , setId] = useState(1)
+    const {token} = location.state
+    console.log(token);
     
 
     useEffect(() =>{
         axios.get(`http://127.0.0.1:8000/api/`,{
+            headers:{
+                'Authorization': 'Bearer ' + token
+            },
             responseType: 'json',
         })
         .then(response => {
@@ -42,9 +43,9 @@ function Post({}: Props): ReactElement {
     
     console.log(posts);
     
-    console.log(postid);
+    // console.log(postid);
     
-
+    
     
     
     // const myObj = JSON.parse();
@@ -58,14 +59,14 @@ function Post({}: Props): ReactElement {
                     <button className="btnADD">ADD Blog</button>
                 </Link>
             </div>
-            <div className="post"  >
+            <div className="posts"  >
 
             {posts.map(post => (
                 
                 
                 <Link key={post.id} state = {{postid : post.id}}
 
-                to="/postpage"  className="a" > 
+                to="/postpage"  className="post a " > 
                         <h1  className = "post__userID">{post.user}</h1>
                     
                         <h1 className = "post__title">{post.title}</h1>

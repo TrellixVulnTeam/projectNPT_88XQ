@@ -23,7 +23,9 @@ export const LoginStyled = styled.div`
         
             &__textbox {
                 width:450px ;
-                /* margin-left:20px; */
+                margin-left:20px;
+                max-width:100%;
+                float: right;
             }
         }
         

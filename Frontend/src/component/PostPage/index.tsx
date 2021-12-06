@@ -21,13 +21,16 @@ function PostPage({}: Props): ReactElement {
     // const [id , setId] = useState(1)
     const {postid} = location.state
     const [post, setPost] = useState<Post>();
-
+    const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM4ODQ1NjgzLCJpYXQiOjE2Mzg3NTkyODMsImp0aSI6ImMzMjc0Zjk5YjExMDQzOGNiMDIzYzQ5Zjg5ZjNkMGYwIiwidXNlcl9pZCI6M30.kKYOsZTeh7N3HekP8UwL8HxU-9M7m71um5tH7ZQszcw"
     console.log(postid);
     
 
 
     useEffect(() =>{
         axios.get(`http://127.0.0.1:8000/api/` + postid,{
+            headers:{
+                'Authorization': 'Bearer ' + token
+            },
             responseType: 'json',
         })
         .then(response => {

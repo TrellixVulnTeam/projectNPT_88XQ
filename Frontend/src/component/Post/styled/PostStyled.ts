@@ -4,6 +4,7 @@ export const PostStyled = styled.div`
     margin:0px 200px;
     padding: 20px 50px;
     font-size:16px;
+    
     .a{
         text-decoration:none;
         color:black;
@@ -28,8 +29,11 @@ export const PostStyled = styled.div`
             font-size:1rem;
         }
         &__content{
+            height:110px;
+            word-wrap:break-word;
             overflow:hidden;
             text-overflow: ellipsis;
+            
         }
     }
 `;

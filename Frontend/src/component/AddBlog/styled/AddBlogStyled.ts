@@ -5,14 +5,41 @@ export const AddBlogStyled = styled.div`
     padding: 20px 50px;
     font-size:16px;
 
+    .formAdd{
+        &__label{
+            padding: 5px 20px;
+        }
+        &__title{
+            width:675px;
+            max-width:100%;
+            margin-left:26px;
+            margin-bottom:20px;
+        }
+        &__content{
+            width:675px;
+            height:500px;
+            margin-bottom:20px;
+            word-wrap: break-word;
+        }
+        &__btn{
+            margin-top:30px;
+            background-color: #04AA6D;
+            color: white;
+            padding: 10px 32px;
+            font-size: 16px;
+            border: none;
+            float: right;
+        }
+    }
+
     .dropdown{
         position: relative;
         display: inline-block;
-
+        margin-bottom:20px;
         &__btn{
             background-color: #04AA6D;
             color: white;
-            padding: 16px;
+            padding: 5px 16px;
             font-size: 16px;
             border: none;
         }

@@ -4,10 +4,15 @@ export const HeaderStyled = styled.div`
     font-size:20px;
     padding:10px;
     background-color:aliceblue;
+    .link{
+        text-decoration:none;
+        color:black;
+    }
     .header{
         &__blog{
             font-weight:bold;
             font-size:3rem;
+            
         }
         &__login{
             padding:15px;
