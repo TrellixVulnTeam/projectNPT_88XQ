@@ -5,22 +5,23 @@ import './index.css';
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import App from './App';
 import Header from './components/header';
-import Footer from './components/footer';
+
 import Register from './components/register';
 import SignIn from './components/login';
 import Logout from './components/logout';
+import Upload from './components/upLoadBlog';
 
 const routing = (
 	<Router>
 		<React.StrictMode>
-			<Header />
+		<Header />
 			<Switch>
 				<Route exact path="/" component={App} />
 				<Route path="/register" component={Register} />
 				<Route path="/login" component={SignIn} />
 				<Route path="/logout" component={Logout} />
+				<Route path="/addBlog" component = {Upload} />
 			</Switch>
-			<Footer />
 		</React.StrictMode>
 	</Router>
 );

@@ -1,87 +1,43 @@
 import React from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { makeStyles } from '@material-ui/core/styles';
-import { NavLink } from 'react-router-dom';
-import Link from '@material-ui/core/Link';
-import Button from '@material-ui/core/Button';
-
-const useStyles = makeStyles((theme) => ({
-	appBar: {
-		borderBottom: `1px solid ${theme.palette.divider}`,
-	},
-	link: {
-		margin: theme.spacing(1, 1.5),
-	},
-	toolbarTitle: {
-		flexGrow: 1,
-	},
-}));
+import { useEffect,useState } from 'react';
 
 function Header() {
-	const classes = useStyles();
-	return (
-		<React.Fragment>
-			<CssBaseline />
-			<AppBar
-				position="static"
-				color="default"
-				elevation={0}
-				className={classes.appBar}
-			>
-				<Toolbar className={classes.toolbar}>
-					<Typography
-						variant="h6"
-						color="inherit"
-						noWrap
-						className={classes.toolbarTitle}
-					>
-						<Link
-							component={NavLink}
-							to="/"
-							underline="none"
-							color="textPrimary"
-						>
-							Blog
-						</Link>
-					</Typography>
-					<nav>
-						<Link
-							color="textPrimary"
-							href="#"
-							className={classes.link}
-							component={NavLink}
-							to="/register"
-						>
-							Register
-						</Link>
-					</nav>
-					<Button
-						href="#"
-						color="primary"
-						variant="outlined"
-						className={classes.link}
-						component={NavLink}
-						to="/login"
-					>
-						Login
-					</Button>
-					<Button
-						href="#"
-						color="primary"
-						variant="outlined"
-						className={classes.link}
-						component={NavLink}
-						to="/logout"
-					>
-						Logout
-					</Button>
-				</Toolbar>
-			</AppBar>
-		</React.Fragment>
-	);
+	const [isLogin, setIsLogin] = useState(false);
+	const [username, setUsername] = useState(null)
+	
+	useEffect (() => {
+		if (localStorage.getItem('access_token')) {
+			setIsLogin(true);
+			setUsername(localStorage.getItem('username'))
+		}
+	},[setIsLogin])
+	if (isLogin === false){
+		return (
+			<nav>
+				<div className="nav-wrapper">
+					<a href="/" className="brand-logo">Blog</a>
+					<ul id="nav-mobile" className="right hide-on-med-and-down">
+						<li><a href="/register">Register</a></li>
+						<li><a href="/login">Login</a></li>
+					</ul>
+				</div>
+			</nav>
+		);
+	}
+	else {
+		return (
+			<nav>
+				<div className="nav-wrapper">
+					<a href="/" className="brand-logo">Blog</a>
+					<ul id="nav-mobile" className="right hide-on-med-and-down">
+	
+						<li><a href="/">{username}</a></li>
+						<li><a href="/Logout">Logout</a></li>
+					</ul>
+				</div>
+			</nav>
+		);
+	}
 }
 
 export default Header;
