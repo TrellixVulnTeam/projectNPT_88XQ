@@ -54,7 +54,9 @@ function Post({}: Props): ReactElement {
         
         <PostStyled >
             <div>
-                <button className="btnADD">ADD Blog</button>
+                <Link to ="/add">
+                    <button className="btnADD">ADD Blog</button>
+                </Link>
             </div>
             <div className="post"  >
 
