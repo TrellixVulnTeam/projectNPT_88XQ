@@ -1,5 +1,5 @@
 from .models import Blog,Category
-from .serializers import BlogViewSerializers,CatogeryViewSerializer,BlogDetailSerializer
+from .serializers import BlogViewSerializers,CatogeryViewSerializer,BlogDetailSerializer,UserRegisterSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -75,13 +75,42 @@ class BlogUpload(APIView):
 
 class BlogDetail(APIView):
     permissions_classes = [permissions.IsAuthenticated,IsOwnerOrReadOnly]
-    def get(self, request, pk,format=None):
+    
+        
+    def put(self, request, pk, format=None):
         try:
-            blog = Blog.objects.get(pk=pk,)
+            blog_obj = Blog.objects.get(pk=pk, on_deleted = False)
+            serializers = BlogDetailSerializer(blog_obj, data=request.data, partial=True)
+            if serializers.is_valid():
+                serializers.save()
+                return Response(serializers.data, status=status.HTTP_200_OK)
+            return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        
-        
+
+    def delete(self, request, pk, format=None):
+        blog_obj = Blog.objects.get(pk=pk, on_deleted = False)
+        blog_obj.on_deleted = True
+        blog_obj.save()
+        return Response({"message": "blog deleted!"}, status=status.HTTP_200_OK)     
+
+class RegisterAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = UserRegisterSerializer
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            response_data =  {
+
+                'user': serializer.data,
+            }
+
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    
 class BlacklistTokenUpdateView(APIView):
     permission_classes = [permissions.AllowAny]
     authentication_classes = ()
@@ -94,3 +123,4 @@ class BlacklistTokenUpdateView(APIView):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+        
