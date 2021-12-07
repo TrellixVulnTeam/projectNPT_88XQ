@@ -42,9 +42,10 @@ class CatogeryViewSerializer(serializers.ModelSerializer):
 class BlogDetailSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     category = serializers.CharField()
+    updated_at = serializers.DateTimeField(read_only=True)
     class Meta:
         model = Blog
-        fields = ['id', 'title', 'category', 'content','public']
+        fields = ['id', 'title', 'category', 'content','public','updated_at']
             
     def create(self, validated_data):
         category = validated_data.pop('category')
