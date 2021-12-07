@@ -1,6 +1,8 @@
 from django.db.models import fields
 from rest_framework import serializers
 from blog.models import Blog, Category
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 
 class BlogViewSerializers(serializers.ModelSerializer):
@@ -38,7 +40,6 @@ class CategoryViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'title', 'blog']
-        # fields = ['id', 'title']
 
 
 class BlogDetailSerializer(serializers.ModelSerializer):
@@ -55,12 +56,39 @@ class BlogDetailSerializer(serializers.ModelSerializer):
         blog_instance = Blog.objects.create(**validated_data, category=category_instance)
         return blog_instance
 
-    def update(self, instance, validated_data):
 
-        instance.title = validated_data.get('title', instance.title)
-        instance.category = validated_data.get('category', instance.category)
-        instance.content = validated_data.get('content', instance.content)
-        instance.public = validated_data.get('public', instance.public)
-        instance.save()
-        return instance
+User = get_user_model()
 
+
+class UserRegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(required=True, write_only=True)
+    password2 = serializers.CharField(required=True, write_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'email',
+            'password',
+            'password2',
+        ]
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'password2': {'write_only': True},
+        }
+
+    def create(self, validated_data):
+        username = validated_data.get('username')
+        email = validated_data.get('email')
+        password = validated_data.get('password')
+        password2 = validated_data.get('password2')
+
+        if password == password2:
+            user = User(username=username, email=email)
+            user.set_password(password)
+            user.save()
+            return user
+        else:
+            raise serializers.ValidationError({
+                'error': 'Both passwords do not match'
+            })

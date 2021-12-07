@@ -27,4 +27,5 @@ urlpatterns = [
     path("blog/", BlogUserView.as_view(), name="blog_user"),
     path("category/<int:pk>", CategoryAllDetailView.as_view(), name="category_detail"),
     path("blogupdate/<int:pk>", BlogDetail.as_view(), name='blog_detail'),
+
 ]

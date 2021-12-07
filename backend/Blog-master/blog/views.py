@@ -3,13 +3,14 @@ from .serializers import BlogViewSerializers, CategoryViewSerializer, BlogDetail
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import generics
-from rest_framework import permissions
+from rest_framework import generics, permissions, status
 from blog.commons.permission import IsOwnerOrReadOnly
 from django.db.models import Prefetch
 from blog.commons.paginations import PaginationAPIView
 from rest_framework.settings import api_settings
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from .serializers import UserRegisterSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class BlogAllView(PaginationAPIView):
@@ -23,6 +24,8 @@ class BlogAllView(PaginationAPIView):
             serializerpage = self.serializer_class(page, many=True)
             return self.get_paginated_response(serializerpage.data)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    # Get all blog
 
 
 class BlogAllDetailView(APIView):
@@ -61,7 +64,6 @@ class BlogUserView(APIView):
 
     def get(self, request, format=None):
         blogs = Blog.objects.filter(on_deleted=False, user=request.user)
-        # blogs = Blog.objects.filter(on_deleted = False)
         serializer = BlogViewSerializers(blogs, many=True)
         return Response(serializer.data)
 
@@ -99,3 +101,35 @@ class BlogDetail(APIView):
         blog.on_deleted = True
         blog.delete()
         return Response({"message": "blog deleted!"}, status=status.HTTP_200_OK)
+
+
+class RegisterAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = UserRegisterSerializer
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+
+            refresh = RefreshToken.for_user(user)
+
+            response_data =  {
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'user': serializer.data,
+            }
+
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogOutAPIView(APIView):
+    def post(self, request, format=None):
+        try:
+            refresh_token = request.data.get('refresh_token')
+            token_obj = RefreshToken(refresh_token)
+            token_obj.blacklist()
+            return Response(status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
