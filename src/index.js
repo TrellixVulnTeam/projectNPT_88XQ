@@ -10,7 +10,8 @@ import Register from './components/register';
 import SignIn from './components/login';
 import Logout from './components/logout';
 import Upload from './components/upLoadBlog';
-
+import PostPage from './components/postpage';
+import Edit from './components/edit'
 const routing = (
 	<Router>
 		<React.StrictMode>
@@ -21,6 +22,8 @@ const routing = (
 				<Route path="/login" component={SignIn} />
 				<Route path="/logout" component={Logout} />
 				<Route path="/addBlog" component = {Upload} />
+				<Route path="/postpage/:id" component = {PostPage} />
+				<Route path="/edit/:id" component = {Edit} />
 			</Switch>
 		</React.StrictMode>
 	</Router>
