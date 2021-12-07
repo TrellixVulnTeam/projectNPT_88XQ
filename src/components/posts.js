@@ -1,73 +1,30 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
+import 'materialize-css/dist/css/materialize.min.css';
 
-const useStyles = makeStyles((theme) => ({
-	cardMedia: {
-		paddingTop: '56.25%', // 16:9
-	},
-	link: {
-		margin: theme.spacing(1, 1.5),
-	},
-	cardHeader: {
-		backgroundColor:
-			theme.palette.type === 'light'
-				? theme.palette.grey[200]
-				: theme.palette.grey[700],
-	},
-	postTitle: {
-		fontSize: '16px',
-		textAlign: 'left',
-	},
-	postText: {
-		display: 'flex',
-		justifyContent: 'left',
-		alignItems: 'baseline',
-		fontSize: '12px',
-		textAlign: 'left',
-		marginBottom: theme.spacing(2),
-	},
-}));
 
 const Posts = (props) => {
 	const { posts } = props;
-	const classes = useStyles();
 	if (!posts || posts.length === 0) return <p>Can not find any posts, sorry</p>;
 	return (
 		<React.Fragment>
-			<Container maxWidth="md" component="main">
-				<Grid container spacing={5} alignItems="flex-end">
 					{posts.results.map((post) => {
 						return (
-							// Enterprise card is full width at sm breakpoint
-							<Grid item key={post.id} xs={12} md={4}>
-								<Card className={classes.card}>
-						
-									<CardContent className={classes.cardContent}>
-										<Typography
-											gutterBottom
-											variant="h6"
-											component="h2"
-											className={classes.postTitle}
-										>
-											{post.title}...
-										</Typography>
-										<div className={classes.postText}>
-											<Typography color="textSecondary">
-												{post.content}...
-											</Typography>
+							<div className="row">
+								<div className="col s12 m6">
+									<div className="card blue-grey darken-1">
+										<div className="card-content white-text">
+											<span className="card-title">{post.title}</span>
+											<small>{post.category}   .By {post.user} published at {post.updated_at}</small>
+											<p>{post.content}</p>
 										</div>
-									</CardContent>
-								</Card>
-							</Grid>
+										<div className="card-action">
+											<a href="/">Visit</a>
+										</div>
+									</div>
+								</div>
+							</div>
 						);
 					})}
-				</Grid>
-			</Container>
 		</React.Fragment>
 	);
 };

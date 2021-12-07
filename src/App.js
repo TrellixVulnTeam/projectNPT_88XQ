@@ -4,6 +4,7 @@ import Posts from './components/posts';
 import PostLoadingComponent from './components/postLoading';
 import axiosInstance from './axios';
 import { useHistory } from 'react-router-dom';
+
 function App() {
 	const PostLoading = PostLoadingComponent(Posts);
 	const [appState, setAppState] = useState({
