@@ -2,7 +2,7 @@ from django.db.models import fields
 from rest_framework import serializers
 from blog.models import Blog, Category
 from django.contrib.auth.models import User
-from django.contrib.auth import get_user_model
+
 
 
 class BlogViewSerializers(serializers.ModelSerializer):
@@ -44,7 +44,7 @@ class CategoryViewSerializer(serializers.ModelSerializer):
 
 class BlogDetailSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
-    category = serializers.CharField()
+    category = serializers.CharField(read_only=True)
 
     class Meta:
         model = Blog
@@ -55,9 +55,6 @@ class BlogDetailSerializer(serializers.ModelSerializer):
         category_instance = Category.objects.get(title=category)
         blog_instance = Blog.objects.create(**validated_data, category=category_instance)
         return blog_instance
-
-
-User = get_user_model()
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
