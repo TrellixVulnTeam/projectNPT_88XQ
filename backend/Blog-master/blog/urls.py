@@ -15,12 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import  BlogUpload,BlogUserView,CategoryAllView,BlogAllView,BlogAllDetailView,CategoryAllDetailView
+from .views import  (BlogUpload,BlogUserView,CategoryAllView,BlogAllView,
+                     BlogAllDetailView,
+                     CategoryAllDetailView,
+                     BlacklistTokenUpdateView)
 urlpatterns = [
     path("", BlogAllView.as_view(),name = "view_blog"),
     path("<int:pk>/", BlogAllDetailView.as_view(), name = "view_detail_blog"),
-    path("creteblog/", BlogUpload.as_view(), name= "create_blog"),
+    path("createblog/", BlogUpload.as_view(), name= "create_blog"),
     path("category/", CategoryAllView.as_view(), name= "category"),
     path("blog/", BlogUserView.as_view(),name= "blog_user"),
     path("category/<int:pk>",CategoryAllDetailView.as_view(), name="category_detail"),
+    path('logout/blacklist/', BlacklistTokenUpdateView.as_view(),
+         name='blacklist')
 ]
