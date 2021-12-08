@@ -2,7 +2,7 @@ from django.db.models import fields
 from rest_framework import serializers
 from blog.models import Blog, Category
 from django.contrib.auth.models import User
-
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class BlogViewSerializers(serializers.ModelSerializer):
@@ -56,6 +56,14 @@ class BlogDetailSerializer(serializers.ModelSerializer):
         blog_instance = Blog.objects.create(**validated_data, category=category_instance)
         return blog_instance
 
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.category = validated_data.get('category', instance.category)
+        instance.content = validated_data.get('content', instance.content)
+        instance.public = validated_data.get('public', instance.public)
+
+        return super().update(instance, validated_data)
+
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(required=True, write_only=True)
@@ -89,3 +97,23 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 'error': 'Both passwords do not match'
             })
+
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+    default_error_message = {
+        'bad_token': ('Token is expired or invalid')
+    }
+
+    def validate(self, attrs):
+        self.token = attrs['refresh']
+        return attrs
+
+    def save(self, **kwargs):
+
+        try:
+            RefreshToken(self.token).blacklist()
+
+        except TokenError:
+            self.fail('bad_token')

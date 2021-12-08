@@ -1,5 +1,6 @@
 from .models import Blog, Category
-from .serializers import BlogViewSerializers, CategoryViewSerializer, BlogDetailSerializer
+from .serializers import BlogViewSerializers, CategoryViewSerializer, BlogDetailSerializer, LogoutSerializer, \
+    UserRegisterSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -82,52 +83,44 @@ class BlogUpload(APIView):
 class BlogDetail(APIView):
     permissions_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
-    def get_object(self, pk, format=None):
-        try:
-            return Blog.objects.get(pk=pk)
-        except Blog.DoesNotExist:
-            raise Http404
-
     def put(self, request, pk, format=None):
-        blog_obj = self.get_object(pk=pk)
-        serializers = BlogDetailSerializer(blog_obj, data=request.data, partial=True)
-        if serializers.is_valid():
-            serializers.save()
-            return Response(serializers.data, status=status.HTTP_201_CREATED)
-        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            blog_obj = Blog.objects.get(pk=pk, on_deleted=False)
+            serializers = BlogDetailSerializer(blog_obj, data=request.data, partial=True)
+            if serializers.is_valid():
+                serializers.save()
+                return Response(serializers.data, status=status.HTTP_200_OK)
+            return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, pk, format=None):
-        blog = self.get_object(pk=pk)
-        blog.on_deleted = True
-        blog.delete()
+        blog_obj = Blog.objects.get(pk=pk, on_deleted = False)
+        blog_obj.on_deleted = True
+        blog_obj.save()
         return Response({"message": "blog deleted!"}, status=status.HTTP_200_OK)
 
 
 class RegisterAPIView(APIView):
     permission_classes = [permissions.AllowAny]
-    serializer_class = UserRegisterSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.data)
+        serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            # refresh = RefreshToken.for_user(user)
-            response_data = {
-                # 'refresh': str(refresh),
-                # 'access': str(refresh.access_token),
-                'user': serializer.data,
-            }
-
-            return Response(response_data, status=status.HTTP_201_CREATED)
+            if user:
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LogOutAPIView(APIView):
-    def post(self, request, format=None):
-        try:
-            refresh_token = request.data.get('refresh_token')
-            token_obj = RefreshToken(refresh_token)
-            token_obj.blacklist()
-            return Response(status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+class LogOutAPIView(generics.GenericAPIView):
+    serializer_class = LogoutSerializer
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
