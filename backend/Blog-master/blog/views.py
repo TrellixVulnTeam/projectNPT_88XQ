@@ -3,7 +3,7 @@ from .serializers import BlogViewSerializers,CatogeryViewSerializer,BlogDetailSe
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import serializers, status
 from rest_framework import generics
 from rest_framework import permissions
 from blog.commons.permission import IsOwnerOrReadOnly
@@ -11,14 +11,17 @@ from django.db.models import Prefetch
 from blog.commons.paginations import PaginationAPIView
 from rest_framework.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.filters import SearchFilter
+from rest_framework import filters
 
 class BlogAllView(PaginationAPIView):
     pagination_class = api_settings.DEFAULT_PAGINATION_CLASS
     serializer_class = BlogViewSerializers
-    permissions_classes = [permissions.AllowAny]
+    permissions_classes = [permissions.IsAuthenticated]
     queryset = Blog.objects.filter(on_deleted = False, public = True)  
     def get(self, request, format=None):
         page = self.paginate_queryset(self.queryset)
+        print(page)
         if page is not None:
             serializerpage = self.serializer_class(page,many = True)
             return self.get_paginated_response(serializerpage.data)
@@ -26,11 +29,10 @@ class BlogAllView(PaginationAPIView):
     
     
 class BlogAllDetailView(APIView):
-    permissions_classes = [permissions.AllowAny]
+    permissions_classes = [permissions.IsAuthenticated]
     def get(self, request, pk,format=None):
         try:
             blogs = Blog.objects.get(id=pk,on_deleted = False, public = True)
-            print(blogs)
             serializer = BlogViewSerializers(blogs)
             return Response(serializer.data)
         except:
@@ -56,13 +58,19 @@ class CategoryAllDetailView(APIView):
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)
  
-class BlogUserView(APIView):
+class BlogUserView(PaginationAPIView):
     permissions_classes = [permissions.IsAuthenticated]
+    serializer_class = BlogViewSerializers
+    pagination_class = api_settings.DEFAULT_PAGINATION_CLASS
     def get(self, request, format=None):
-        blogs = Blog.objects.filter(on_deleted = False , user = request.user)
-        # blogs = Blog.objects.filter(on_deleted = False)
-        serializer = BlogViewSerializers(blogs, many=True)
-        return Response(serializer.data)
+        queryset = Blog.objects.filter(on_deleted = False , user = request.user)
+        page = self.paginate_queryset(queryset)
+        print(page)
+        if page is not None:
+            serializerpage = self.serializer_class(page,many = True)
+            return self.get_paginated_response(serializerpage.data)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+   
 
 class BlogUpload(APIView):
     permissions_classes = [permissions.IsAuthenticated]
@@ -129,3 +137,9 @@ class BlacklistTokenUpdateView(APIView):
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         
+class BlogFilterView(generics.ListAPIView):
+    permission_classes = [permissions.AllowAny]
+    queryset = Blog.objects.filter(on_deleted=False, public=True)
+    serializer_class = BlogViewSerializers
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'user__username', 'category__title']
