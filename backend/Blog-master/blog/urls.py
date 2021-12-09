@@ -18,7 +18,7 @@ from django.urls import path
 from .views import  (BlogUpload,BlogUserView,CategoryAllView,BlogAllView,
                      BlogAllDetailView,
                      CategoryAllDetailView,
-                     BlacklistTokenUpdateView,BlogDetail)
+                     BlacklistTokenUpdateView,BlogDetail,BlogFilterView)
 urlpatterns = [
     path("", BlogAllView.as_view(),name = "view_blog"),
     path("<int:pk>/", BlogAllDetailView.as_view(), name = "view_detail_blog"),
@@ -29,5 +29,5 @@ urlpatterns = [
     path("blog/<int:pk>", BlogDetail.as_view(), name='blog_detail'),
     path('logout/blacklist/', BlacklistTokenUpdateView.as_view(),
          name='blacklist'),
-    
+    path('search/', BlogFilterView.as_view(),name='search')
 ]
