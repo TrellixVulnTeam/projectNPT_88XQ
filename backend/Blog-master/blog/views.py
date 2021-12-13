@@ -1,18 +1,19 @@
-from .models import Blog,Category
-from .serializers import BlogViewSerializers,CatogeryViewSerializer,BlogDetailSerializer,UserRegisterSerializer
-from django.http import Http404
+from .models import Blog
+from .serializers import BlogViewSerializers,BlogDetailSerializer,UserRegisterSerializer
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework import generics
 from rest_framework import permissions
 from blog.commons.permission import IsOwnerOrReadOnly
-from django.db.models import Prefetch
+# from django.db.models import Prefetch
 from blog.commons.paginations import PaginationAPIView
 from rest_framework.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.filters import SearchFilter
+# from rest_framework.filters import SearchFilter
 from rest_framework import filters
+
 
 class BlogAllView(PaginationAPIView):
     pagination_class = api_settings.DEFAULT_PAGINATION_CLASS
@@ -39,24 +40,25 @@ class BlogAllDetailView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
     
     
-class CategoryAllView(generics.ListAPIView):
-    permissions_classes = [permissions.AllowAny]
-    def get(self, request, format=None):
-        category = Category.objects.prefetch_related(
-            Prefetch('blog',queryset=Blog.objects.filter(on_deleted = False, public = True))).filter(on_deleted = False)
-        serializer = CatogeryViewSerializer(category, many=True)
-        return Response(serializer.data)
+# class CategoryAllView(generics.ListAPIView):
+#     permissions_classes = [permissions.AllowAny]
+#     def get(self, request, format=None):
+#         category = Category.objects.prefetch_related(
+#             Prefetch('blog',queryset=Blog.objects.filter(on_deleted = False, public = True))).filter(on_deleted = False)
+#         serializer = CatogeryViewSerializer(category, many=True)
+#         return Response(serializer.data)
 
-class CategoryAllDetailView(APIView):
-    permissions_classes = [permissions.AllowAny]
-    def get(self, request, pk,format=None):
-        try:
-            category = Category.objects.prefetch_related(
-            Prefetch('blog',queryset=Blog.objects.filter(on_deleted = False, public = True))).get(on_deleted = False,id = pk)
-            serializer = CatogeryViewSerializer(category)
-            return Response(serializer.data)
-        except:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+# class CategoryAllDetailView(APIView):
+#     permissions_classes = [permissions.AllowAny]
+#     def get(self, request, pk,format=None):
+#         try:
+#             category = Category.objects.prefetch_related(
+#             Prefetch('blog',queryset=Blog.objects.filter(on_deleted = False, public = True))).get(on_deleted = False,id = pk)
+#             serializer = CatogeryViewSerializer(category)
+#             return Response(serializer.data)
+#         except:
+#             return Response(status=status.HTTP_404_NOT_FOUND)
+ 
  
 class BlogUserView(PaginationAPIView):
     permissions_classes = [permissions.IsAuthenticated]
@@ -80,6 +82,7 @@ class BlogUpload(APIView):
             serializer.save(user = request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class BlogDetail(APIView):
     permissions_classes = [permissions.IsAuthenticated,IsOwnerOrReadOnly]
@@ -107,10 +110,11 @@ class BlogDetail(APIView):
         blog_obj.save()
         return Response({"message": "blog deleted!"}, status=status.HTTP_200_OK)     
 
+
 class RegisterAPIView(APIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = UserRegisterSerializer
-
+    
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
@@ -136,6 +140,7 @@ class BlacklistTokenUpdateView(APIView):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+   
         
 class BlogFilterView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
